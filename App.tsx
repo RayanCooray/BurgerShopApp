@@ -5,6 +5,7 @@ import HomePage from './app/screens/HomePage';
 import MenuPage from './app/screens/MenuPage';
 import BurgerCustomizationPage from './app/screens/BurgerCustomizationPage';
 import OrderSummaryPage from './app/screens/OrderSummaryPage';
+import Notification from './app/components/NotificationPage';
 import ProfilePage from './app/screens/ProfilePage';
 import { TailwindProvider } from 'tailwindcss-react-native';
 
@@ -18,6 +19,7 @@ export default function App() {
           <Stack.Screen name="Home" component={HomePage} />
           <Stack.Screen name="Menu" component={MenuPage} />
           <Stack.Screen name="CustomizeBurger" component={BurgerCustomizationPage} />
+          <Stack.Screen name="Notification" component={Notification} />
           <Stack.Screen name="OrderSummary" component={OrderSummaryPage} />
           <Stack.Screen name="Profile" component={ProfilePage} />
         </Stack.Navigator>

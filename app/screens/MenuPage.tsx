@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -6,10 +6,14 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Animated,
+  Dimensions,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack/types";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
+import { BlurView } from "expo-blur";
 
 const data = [
   {
@@ -59,10 +63,23 @@ const data = [
   },
 ];
 
+const { height } = Dimensions.get("window");
+
 export default function MenuPage() {
+  const [liked, setLiked] = useState(Array(data.length).fill(false));
+
+  const handleLike = (index: number) => {
+    const newLiked = [...liked];
+    newLiked[index] = !newLiked[index];
+    setLiked(newLiked);
+  };
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   const [quantities, setQuantities] = useState(Array(data.length).fill(0));
+
+  const [notificationsVisible, setNotificationsVisible] = useState(false);
+
+  const slideAnim = useRef(new Animated.Value(-height)).current;
 
   const incrementQuantity = (index: any) => {
     const newQuantities = [...quantities];
@@ -78,6 +95,32 @@ export default function MenuPage() {
     }
   };
 
+  const handleAddToCart = () => {
+    // Handle action for "Add to Cart"
+    navigation.navigate("Cart"); // Replace with actual navigation logic
+  };
+
+  // const handleNotificationForYou = () => {
+  //   navigation.navigate('Notification');
+  // }
+
+  const handleNotificationForYou = () => {
+    setNotificationsVisible(true);
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const closeNotifications = () => {
+    Animated.timing(slideAnim, {
+      toValue: -height,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setNotificationsVisible(false));
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -89,7 +132,12 @@ export default function MenuPage() {
           />
           <Text style={styles.location}>Kalutara, Panadura</Text>
         </View>
-        <Ionicons name="search" size={24} color="black" />
+        <Ionicons
+          name="notifications-outline"
+          size={24}
+          color="black"
+          onPress={handleNotificationForYou}
+        />
       </View>
 
       {/* Filters */}
@@ -129,6 +177,14 @@ export default function MenuPage() {
                   <Text style={styles.buttonText}>Remove</Text>
                 </TouchableOpacity>
                 <Text style={styles.quantity}>{quantities[index]}</Text>
+                <TouchableOpacity onPress={() => handleLike(index)}>
+                  <Ionicons
+                    name={liked[index] ? "heart" : "heart-outline"}
+                    size={24}
+                    color={liked[index] ? "red" : "#000"}
+                    style={styles.heartIcon}
+                  />
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -139,23 +195,94 @@ export default function MenuPage() {
         <Text style={styles.topOfWeekText}>Top of the week</Text>
         <TouchableOpacity>
           <Text style={styles.seeAll}>See all</Text>
-
         </TouchableOpacity>
       </View>
 
       <View style={styles.menuItems}></View>
 
       <View style={styles.navBar}>
-        <Ionicons name="home-outline" size={24} color="black" onPress={() => navigation.navigate('Home')}/>
-        <Ionicons name="menu-outline" size={24} color="black" onPress={() => navigation.navigate('OrderSummary')}/>
-        <Ionicons name="basket-outline" size={24} color="black" onPress={() => navigation.navigate('Notification') } />
-        <Ionicons name="person-outline" size={24} color="black" onPress={() => navigation.navigate('Profile') } />
+        <Ionicons
+          name="home-outline"
+          size={24}
+          color="black"
+          onPress={() => navigation.navigate("Home")}
+        />
+        <Ionicons
+          name="menu-outline"
+          size={24}
+          color="black"
+          onPress={() => navigation.navigate("OrderSummary")}
+        />
+        <Ionicons
+          name="basket-outline"
+          size={24}
+          color="black"
+          onPress={() => navigation.navigate("Notification")}
+        />
+        <Ionicons
+          name="person-outline"
+          size={24}
+          color="black"
+          onPress={() => navigation.navigate("Profile")}
+        />
       </View>
+
+      {notificationsVisible && (
+        <TouchableWithoutFeedback onPress={closeNotifications}>
+          <View style={styles.overlay}>
+            <Animated.View
+              style={[
+                styles.notificationsContainer,
+                { transform: [{ translateY: slideAnim }] },
+              ]}
+            >
+              <Text style={styles.notificationsHeader}>Notifications</Text>
+              <View style={styles.notificationItem}>
+                <Text style={styles.notificationText}>
+                  New offer on Mega Burger 💯
+                </Text>
+                {/* {data.slice(0, 1).map((item, index) => (
+                <View key={index} style={styles.menuItem}>
+                <Image source={item.image} style={styles.menuItemImage} />
+                <View style={styles.menuItemInfo}>
+                <Text style={styles.menuItemTitle}>{item.title}</Text>
+                <Text style={styles.menuItemPrice}>{item.price}</Text>
+                </View>
+                </View>
+                ))} */}
+              </View>
+              <View style={styles.notificationItem}>
+                <Text style={styles.notificationText}>
+                  Full Meal just for 4000😶😱
+                </Text>
+                {/* {data.slice(9, 10).map((item, index) => (
+                <View key={index} style={styles.menuItem}>
+                <Image source={item.image} style={styles.menuItemImage} />
+                <View style={styles.menuItemInfo}>
+                <Text style={styles.menuItemTitle}>{item.title}</Text>
+                <Text style={styles.menuItemPrice}>{item.price}</Text>
+                </View>
+                </View>
+                ))} */}
+              </View>
+              <View style={styles.notificationItem}>
+                <Text style={styles.notificationText}>
+                  Flash sale on Chicken Burger!
+                </Text>
+              </View>
+            </Animated.View>
+          </View>
+        </TouchableWithoutFeedback>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  heartIcon: {
+    left: 60,
+    bottom: 20,
+  },
   quantity: {
     fontWeight: "bold",
     marginLeft: 10,
@@ -300,5 +427,36 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderTopWidth: 1,
     borderColor: "#f0f0f0",
+  },
+  notificationsContainer: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    shadowColor: "#000",
+    // maxHeight: "70%",
+    // bottom: 200,
+    // width: "97%",
+    // height: 470,
+    // left: 7,
+  },
+  notificationsHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  notificationItem: {
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e7e7e7",
+  },
+  notificationText: {
+    fontSize: 20,
+    paddingTop: 10,
+    color: "#F47556",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
 });
