@@ -1,20 +1,27 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomePage from './app/screens/HomePage';
+import MenuPage from './app/screens/MenuPage';
+import BurgerCustomizationPage from './app/screens/BurgerCustomizationPage';
+import OrderSummaryPage from './app/screens/OrderSummaryPage';
+import ProfilePage from './app/screens/ProfilePage';
+import { TailwindProvider } from 'tailwindcss-react-native';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <TailwindProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Home" component={HomePage} />
+          <Stack.Screen name="Menu" component={MenuPage} />
+          <Stack.Screen name="CustomizeBurger" component={BurgerCustomizationPage} />
+          <Stack.Screen name="OrderSummary" component={OrderSummaryPage} />
+          <Stack.Screen name="Profile" component={ProfilePage} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </TailwindProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
