@@ -8,14 +8,29 @@ import OrderSummaryPage from './app/screens/OrderSummaryPage';
 import Notification from './app/components/NotificationPage';
 import ProfilePage from './app/screens/ProfilePage';
 import { TailwindProvider } from 'tailwindcss-react-native';
-
+import {useFonts} from "expo-font";
+import { IslandMoments_400Regular } from '@expo-google-fonts/island-moments';
+import { BebasNeue_400Regular } from '@expo-google-fonts/bebas-neue';
+import LoadingScreen from './app/Loading/LoadingScreen';
+import Welcome from './app/screens/Welcome';
 const Stack = createStackNavigator();
 
 export default function App() {
+  
+  const [fontsLoaded, fontError] = useFonts({
+    IslandMoments_400Regular,
+    BebasNeue_400Regular
+});
+
+if (!fontsLoaded) {
+  return <LoadingScreen />;
+}
+
   return (
     <TailwindProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Welcome" component={Welcome} />
           <Stack.Screen name="Home" component={HomePage} />
           <Stack.Screen name="Menu" component={MenuPage} />
           <Stack.Screen name="CustomizeBurger" component={BurgerCustomizationPage} />

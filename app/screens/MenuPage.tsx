@@ -100,10 +100,6 @@ export default function MenuPage() {
     navigation.navigate("Cart"); // Replace with actual navigation logic
   };
 
-  // const handleNotificationForYou = () => {
-  //   navigation.navigate('Notification');
-  // }
-
   const handleNotificationForYou = () => {
     setNotificationsVisible(true);
     Animated.timing(slideAnim, {
