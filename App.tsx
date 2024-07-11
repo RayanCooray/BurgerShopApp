@@ -13,6 +13,7 @@ import { IslandMoments_400Regular } from '@expo-google-fonts/island-moments';
 import { BebasNeue_400Regular } from '@expo-google-fonts/bebas-neue';
 import LoadingScreen from './app/Loading/LoadingScreen';
 import Welcome from './app/screens/Welcome';
+import LoginScreen from './app/screens/LoginScreen';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -30,6 +31,7 @@ if (!fontsLoaded) {
     <TailwindProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Welcome" component={Welcome} />
           <Stack.Screen name="Home" component={HomePage} />
           <Stack.Screen name="Menu" component={MenuPage} />

@@ -20,64 +20,46 @@ const data = [
     title: "Mega Burger",
     price: "Rs.1500",
     image: require("../../assets/burger1.jpg"),
-    type: "burger",
-    popular: true,
   },
   {
     title: "Cheese Beef Burger",
     price: "Rs.1200",
     image: require("../../assets/burger2.jpg"),
-    type: "burger",
-    popular: true,
   },
   {
     title: "Bacon Medium Burger",
     price: "Rs.900",
     image: require("../../assets/burger3.jpg"),
-    type: "burger",
-    popular: false,
   },
   {
     title: "Bacon Large Burger",
     price: "Rs.1350",
     image: require("../../assets/burger4.jpg"),
-    type: "burger",
-    popular: false,
   },
   {
     title: "Chicken Burger",
     price: "Rs.1000",
     image: require("../../assets/burger5.jpg"),
-    type: "burger",
-    popular: false,
   },
   {
     title: "Full Meal Burger with Fries/2x Coke",
     price: "Rs.2300",
     image: require("../../assets/burger6.jpg"),
-    type: "burger",
-    popular: true,
   },
   {
     title: "Mexican Spicy Pizza Medium",
     price: "Rs.2300",
     image: require("../../assets/pizza1.jpg"),
-    type: "pizza",
-    popular: false,
   },
   {
     title: "Salami Spicy Pizza Large",
     price: "Rs.5200",
     image: require("../../assets/pizza2.jpg"),
-    type: "pizza",
-    popular: false,
   },
   {
-    title: "Pepperoni Large Pizza",
+    title: "Peparoni  Large Pizza",
     price: "Rs.2300",
     image: require("../../assets/pizza3.jpg"),
-    type: "pizza",
-    popular: true,
   },
 ];
 
@@ -85,37 +67,27 @@ const { height } = Dimensions.get("window");
 
 export default function MenuPage() {
   const [liked, setLiked] = useState(Array(data.length).fill(false));
-  const [filterType, setFilterType] = useState("all");
-  const [notificationsVisible, setNotificationsVisible] = useState(false);
-  const slideAnim = useRef(new Animated.Value(-height)).current;
-
-  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-  const [quantities, setQuantities] = useState(Array(data.length).fill(0));
 
   const handleLike = (index: number) => {
     const newLiked = [...liked];
     newLiked[index] = !newLiked[index];
     setLiked(newLiked);
   };
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
-  const handleFilter = (type: string) => {
-    setFilterType(type);
-  };
+  const [quantities, setQuantities] = useState(Array(data.length).fill(0));
 
-  const filteredData = data.filter((item) => {
-    if (filterType === "all") return true;
-    if (filterType === "popular") return item.popular;
-    if (filterType === "favorite") return liked[data.indexOf(item)];
-    return item.type === filterType;
-  });
+  const [notificationsVisible, setNotificationsVisible] = useState(false);
 
-  const incrementQuantity = (index: number) => {
+  const slideAnim = useRef(new Animated.Value(-height)).current;
+
+  const incrementQuantity = (index: any) => {
     const newQuantities = [...quantities];
     newQuantities[index]++;
     setQuantities(newQuantities);
   };
 
-  const decrementQuantity = (index: number) => {
+  const decrementQuantity = (index: any) => {
     if (quantities[index] > 0) {
       const newQuantities = [...quantities];
       newQuantities[index]--;
@@ -124,7 +96,8 @@ export default function MenuPage() {
   };
 
   const handleAddToCart = () => {
-    navigation.navigate("Cart");
+    // Handle action for "Add to Cart"
+    navigation.navigate("Cart"); // Replace with actual navigation logic
   };
 
   const handleNotificationForYou = () => {
@@ -165,90 +138,22 @@ export default function MenuPage() {
 
       {/* Filters */}
       <View style={styles.filters}>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            filterType === "all" && styles.activeFilterButton,
-          ]}
-          onPress={() => handleFilter("all")}
-        >
-          <Text
-            style={[
-              styles.filterText,
-              filterType === "all" && styles.activeFilterText,
-            ]}
-          >
-            All types
-          </Text>
+        <TouchableOpacity style={styles.filterButton}>
+          <Text style={styles.filterText}>All types</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            filterType === "burger" && styles.activeFilterButton,
-          ]}
-          onPress={() => handleFilter("burger")}
-        >
-          <Text
-            style={[
-              styles.filterText,
-              filterType === "burger" && styles.activeFilterText,
-            ]}
-          >
-            Burger
-          </Text>
+        <TouchableOpacity style={styles.filterButton}>
+          <Text style={styles.filterText}>Popular</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            filterType === "pizza" && styles.activeFilterButton,
-          ]}
-          onPress={() => handleFilter("pizza")}
-        >
-          <Text
-            style={[
-              styles.filterText,
-              filterType === "pizza" && styles.activeFilterText,
-            ]}
-          >
-            Pizza
-          </Text>
+        <TouchableOpacity style={styles.filterButton}>
+          <Text style={styles.filterText}>Favourite</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            filterType === "popular" && styles.activeFilterButton,
-          ]}
-          onPress={() => handleFilter("popular")}
-        >
-          <Text
-            style={[
-              styles.filterText,
-              filterType === "popular" && styles.activeFilterText,
-            ]}
-          >
-            Popular
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            filterType === "favorite" && styles.activeFilterButton,
-          ]}
-          onPress={() => handleFilter("favorite")}
-        >
-          <Text
-            style={[
-              styles.filterText,
-              filterType === "favorite" && styles.activeFilterText,
-            ]}
-          >
-            Favorite
-          </Text>
+        <TouchableOpacity style={styles.filterButton}>
+          <Text style={styles.filterText}>Latest</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.itemsbox}>
-        {filteredData.map((item, index) => (
+        {data.map((item, index) => (
           <View key={index} style={styles.menuItem}>
             <Image source={item.image} style={styles.menuItemImage} />
             <View style={styles.menuItemInfo}>
@@ -332,11 +237,29 @@ export default function MenuPage() {
                 <Text style={styles.notificationText}>
                   New offer on Mega Burger 💯
                 </Text>
+                {/* {data.slice(0, 1).map((item, index) => (
+                <View key={index} style={styles.menuItem}>
+                <Image source={item.image} style={styles.menuItemImage} />
+                <View style={styles.menuItemInfo}>
+                <Text style={styles.menuItemTitle}>{item.title}</Text>
+                <Text style={styles.menuItemPrice}>{item.price}</Text>
+                </View>
+                </View>
+                ))} */}
               </View>
               <View style={styles.notificationItem}>
                 <Text style={styles.notificationText}>
                   Full Meal just for 4000😶😱
                 </Text>
+                {/* {data.slice(9, 10).map((item, index) => (
+                <View key={index} style={styles.menuItem}>
+                <Image source={item.image} style={styles.menuItemImage} />
+                <View style={styles.menuItemInfo}>
+                <Text style={styles.menuItemTitle}>{item.title}</Text>
+                <Text style={styles.menuItemPrice}>{item.price}</Text>
+                </View>
+                </View>
+                ))} */}
               </View>
               <View style={styles.notificationItem}>
                 <Text style={styles.notificationText}>
@@ -474,12 +397,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
-  activeFilterButton: {
-    backgroundColor: "#FFAF32",
-  },
-  activeFilterText: {
-    color: "#fff",
-  },
   topOfWeek: {
     top: 10,
     flexDirection: "row",
@@ -512,6 +429,11 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     shadowColor: "#000",
+    // maxHeight: "70%",
+    // bottom: 200,
+    // width: "97%",
+    // height: 470,
+    // left: 7,
   },
   notificationsHeader: {
     fontSize: 18,
